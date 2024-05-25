@@ -40,6 +40,7 @@ class Product(models.Model):
 
     class Meta:
         ordering = ['name']
+
 #     class Meta:
 #         verbose_name = 'студент' # Настройка для наименования одного объекта
 #         verbose_name_plural = 'студенты' # Настройка для наименования набора объектов

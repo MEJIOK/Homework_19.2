@@ -1,13 +1,14 @@
-from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
+from django.urls import path, include
 from catalog.apps import CatalogConfig
 from . import views
 
-app_name = CatalogConfig.name
+app_name = 'catalog'
 
 urlpatterns = [
     path('', views.home, name='home'),
     path('contacts/', views.contacts, name='contacts'),
-    path('', include('catalog.urls')),
 ]
 
 if settings.DEBUG:

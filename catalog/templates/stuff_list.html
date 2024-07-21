@@ -4,15 +4,15 @@
 <div class="album py-5 bg-body-tertiary">
     <div class="container">
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-        {% for item in stuff %}
+        {% for product in stuff %}
         <div class="col">
           <div class="card shadow-sm">
-            <img src="{{ item.image.url | media_filter }}" alt="" class="bd-placeholder-img card-img-top" width="100%" height="400">
+            <img src="{{ product.image.url | media_filter }}" alt="" class="bd-placeholder-img card-img-top" width="100%" height="400">
             <div class="card-body">
               <p class="card-text">{{ item.name }}</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                  <a class="btn btn-primary" href="{% url 'catalog:product_detail' item.pk %}" role="button">Посмотреть</a>
+                  <a class="btn btn-primary" href="{% url 'catalog:product_detail' product.pk %}" role="button">Посмотреть</a>
                 </div>
                 <small class="text-body-secondary">9 mins</small>
               </div>

@@ -2,14 +2,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 
-from catalog.views import index, contacts, product_detail
+from .views import (IndexView, ProductDetailView, ContactsView)
 
 app_name = 'catalog'
 
 urlpatterns = [
-    path('', index, name='home'),
-    path('product/<int:pk>/', product_detail, name='product_detail'),
-    path('contacts/', contacts, name='contacts')
+    path('', IndexView.as_view(), name='home'),
+    path('product/<int:pk>/', ProductDetailView.as_view(), name='product_detail'),
+    path('contacts/', ContactsView.as_view(), name='contacts'),
 ]
 
 if settings.DEBUG:

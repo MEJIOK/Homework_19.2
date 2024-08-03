@@ -1,16 +1,21 @@
 from django.contrib import admin
-from catalog.models import Category, Product
 
-
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'description')  # Отображение id и наименования
-    list_filter = ('name',)
-    search_fields = ('name', 'description')  # Поиск по наименованию и описанию (опционально)
+from catalog.models import Product, Category, Version
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'price', 'category')  # Отображение id, названия, цены и категории
-    list_filter = ('name', 'price', 'category')  # Фильтрация
-    search_fields = ('name', 'description', 'category', 'price')  # Поиск по названию  описанию и тд.
+    list_display = ('id', 'name', 'price', 'category')
+    list_filter = ('category',)
+    search_fields = ('name', 'description')
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title')
+
+
+@admin.register(Version)
+class VersionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'product', 'version_number', 'version_name', 'is_current_version')
+    list_filter = ('product', 'is_current_version')

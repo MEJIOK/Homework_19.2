@@ -1,54 +1,77 @@
-import datetime
-from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, DetailView, TemplateView, UpdateView, DeleteView, CreateView
-from catalog.models import Product
-from django.urls import reverse_lazy
-from .models import BlogPost
+from django.forms import inlineformset_factory
+from django.shortcuts import render
+from django.urls import reverse_lazy, reverse
+from django.views import View
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+
+from catalog.forms import ProductForm, VersionForm
+from catalog.models import Product, Version
 
 
-# def index(request):
-#     stuff = Product.objects.all()
-#     context = {'stuff': stuff}
-#     return render(request, 'stuff_list.html', context)
-
-
-class IndexView(ListView):
+class ProductListView(ListView):
     model = Product
-    template_name = 'stuff_list.html'
-    context_object_name = 'stuff'
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        for product in self.object_list:
+            product.active_version = product.versions.filter(is_current_version=True).first()
+        return context
 
-# def product_detail(request, pk):
-#     product = get_object_or_404(Product, pk=pk)
-#     context = {'product': product}
-#     return render(request, 'product_detail.html', context)
 
 class ProductDetailView(DetailView):
     model = Product
-    template_name = 'product_detail.html'
-    context_object_name = 'product'
 
 
-# def contacts(request):
-#     if request.method == 'POST':
-#         name = request.POST.get('name')
-#         phone = request.POST.get('phone')
-#         message = request.POST.get('message')
-#         timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-#         with open('feedback.txt', 'a') as file:
-#             file.write(f'{timestamp}, {name},{phone}: {message}\n')
-#
-#     return render(request, 'contacts.html')
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    success_url = reverse_lazy("catalog:index")
 
-class ContactsView(TemplateView):
-    template_name = 'contacts.html'
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+
+    def get_success_url(self):
+        return reverse("catalog:product_info", kwargs={"pk": self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        ProductFormset = inlineformset_factory(Product, Version, VersionForm, extra=1)
+        if self.request.method == "POST":
+            context_data['formset'] = ProductFormset(self.request.POST, instance=self.object)
+        else:
+            context_data['formset'] = ProductFormset(instance=self.object)
+        return context_data
+
+    def form_valid(self, form):
+        context_data = self.get_context_data()
+        formset = context_data['formset']
+        if form.is_valid() and formset.is_valid():
+            self.object = form.save()
+            formset.instance = self.object
+            formset.save()
+            return super().form_valid(form)
+        else:
+            return self.render_to_response(self.get_context_data(form=form, formset=formset))
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    success_url = reverse_lazy("catalog:index")
+
+
+class ContactsView(View):
+    template_name = 'catalog/contacts.html'
 
     def post(self, request, *args, **kwargs):
-        name = request.POST.get('name')
-        phone = request.POST.get('phone')
-        message = request.POST.get('message')
-        timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        with open('feedback.txt', 'a') as file:
-            file.write(f'{timestamp}, {name},{phone}: {message}\n')
-        return super().get(request, *args, **kwargs)
+        if request.method == 'POST':
+            name = request.POST.get('name')
+            phone = request.POST.get('phone')
+            message = request.POST.get('message')
+            print(name, phone, message)
+            return render(request, 'index.html')
+        return render(request, self.template_name)
 
+    def get(self, request):
+        return render(request, self.template_name)

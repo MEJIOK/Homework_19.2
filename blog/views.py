@@ -48,3 +48,4 @@ class PostUpdateView(UpdateView):
 class PostDeleteView(DeleteView):
     model = Post
     success_url = reverse_lazy("blog:post_list")
+

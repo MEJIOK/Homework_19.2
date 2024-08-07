@@ -130,8 +130,8 @@ LOGOUT_REDIRECT_URL = '/'
 
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = 'evgeniy.erokhov.dev@yandex.com'
+EMAIL_HOST_PASSWORD = 'ziiyadvxcupwfjep'
 EMAIL_USE_TSL = False
 EMAIL_USE_SSL = True
 
